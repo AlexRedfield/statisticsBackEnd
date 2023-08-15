@@ -2,6 +2,7 @@ import json
 
 from flask import Flask
 from flask import request
+from flask_cors import CORS, cross_origin
 from db_utils import QueryData, MyEncoder
 
 app = Flask(__name__)
@@ -10,6 +11,7 @@ conn = QueryData()
 
 
 @app.route("/session")
+@cross_origin()
 def get_session():
     data = conn.query_session()
 
@@ -19,4 +21,4 @@ def get_session():
 
 if __name__ == "__main__":
     app.debug = True
-    app.run(host="0.0.0.0", port=80)
+    app.run(port=80)
