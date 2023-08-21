@@ -25,6 +25,12 @@ def get_playtime():
     json_data = json.dumps(data, cls=MyEncoder, indent=4, ensure_ascii=False)
     return json_data
 
+@app.route("/re_playtime")
+@cross_origin()
+def get_re_playtime():
+    data=conn.query_game_time_format()
+    json_data = json.dumps(data, cls=MyEncoder, indent=4, ensure_ascii=False)
+    return json_data
 
 if __name__ == "__main__":
     app.debug = True

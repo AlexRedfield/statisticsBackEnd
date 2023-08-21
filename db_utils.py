@@ -18,6 +18,7 @@ def ini_session():
     return db_session(), engine
 
 
+
 class QueryData:
     def __init__(self):
         self.conn, self.engine = ini_session()
@@ -40,6 +41,11 @@ class QueryData:
         ]
         game_reverse = [l[::-1] for l in game_time_list]
         return [tuple(row) for row in game_reverse]
+
+    def query_game_time_format(self):
+        game_time = self.conn.query(t_most_played_games).all()
+
+        return [tuple(row) for row in game_time]
 
 
 # 生成model代码 sqlacodegen --noconstraints --outfile=models.py mysql+pymysql://root:mysql877@localhost:3306/steam?charset=utf8
