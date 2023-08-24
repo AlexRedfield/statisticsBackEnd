@@ -2,7 +2,8 @@ import decimal
 import json
 import datetime
 
-from sqlalchemy import create_engine
+from flask.json.provider import DefaultJSONProvider
+from sqlalchemy import create_engine, or_
 from sqlalchemy.orm import sessionmaker
 from models import *
 
@@ -18,19 +19,19 @@ def ini_session():
     return db_session(), engine
 
 
-
 class QueryData:
     def __init__(self):
         self.conn, self.engine = ini_session()
 
-    def query_session(self):
+    def query_session(self, game_id: str):
         game_sessions = (
             self.conn.query(t_session)
-            .filter(t_session.columns["app_id"] == "990080")
+            .filter(or_(t_session.columns["app_id"] == game_id, game_id is None))
             .all()
         )
         # print([game_session['app_id'] for game_session in game_sessions])
         return [tuple(row) for row in game_sessions]
+
 
     def query_game_time(self):
         game_time = self.conn.query(t_most_played_games).all()
@@ -51,7 +52,7 @@ class QueryData:
 # 生成model代码 sqlacodegen --noconstraints --outfile=models.py mysql+pymysql://root:mysql877@localhost:3306/steam?charset=utf8
 
 
-class MyEncoder(json.JSONEncoder):
+class MyEncoder(DefaultJSONProvider):
     def default(self, obj):
         if isinstance(obj, datetime.datetime):
             return obj.strftime("%Y-%m-%d %H:%M:%S")
